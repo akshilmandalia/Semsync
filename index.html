@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="SemSync — a simple semester planner for students to track assignments, syllabus progress, and marks.">
+<title>SemSync — Student Workspace</title>
+<style>
+:root{--bg:#0b1120;--panel:#111b2e;--panel2:#152239;--line:#263650;--text:#edf4ff;--muted:#93a4bd;--cyan:#67e8f9;--violet:#a78bfa;--green:#6ee7b7;--red:#fda4af;--radius:18px}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 75% -10%,#182a4b 0,transparent 42%),var(--bg);color:var(--text);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+button,input,select{font:inherit}button{cursor:pointer}.app{min-height:100vh;display:grid;grid-template-columns:245px minmax(0,1fr)}
+.sidebar{padding:26px 17px;border-right:1px solid var(--line);background:#0b1322dd;display:flex;flex-direction:column;gap:30px}
+.brand{display:flex;align-items:center;gap:11px;padding:0 8px}.brand-mark{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:linear-gradient(135deg,#67e8f9,#818cf8);color:#07111f;font-weight:900;font-size:20px}.brand-name{font-weight:800;font-size:20px;letter-spacing:-.5px}.brand-name span{color:var(--cyan)}
+.nav-label{padding:0 12px;color:#647894;font-size:11px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase}.nav{display:grid;gap:7px}.nav button{border:0;background:transparent;color:var(--muted);padding:12px;border-radius:12px;text-align:left;display:flex;align-items:center;gap:12px}.nav button:hover,.nav button.active{background:#1a2a42;color:var(--text)}.nav button.active{box-shadow:inset 3px 0 var(--cyan)}.nav-icon{width:22px;text-align:center;font-size:17px}.side-note{margin-top:auto;padding:15px;border:1px solid var(--line);border-radius:15px;background:linear-gradient(145deg,#14243b,#111a2a);color:var(--muted);font-size:12px}.side-note strong{display:block;color:var(--text);font-size:13px;margin-bottom:5px}
+main{min-width:0;padding:30px clamp(18px,4vw,52px) 50px;max-width:1500px;width:100%;margin:auto}.topbar{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:30px}.eyebrow{color:var(--cyan);font-size:12px;text-transform:uppercase;letter-spacing:1.7px;font-weight:800}.topbar h1{font-size:clamp(25px,3vw,34px);line-height:1.15;margin:7px 0 0;letter-spacing:-1px}.date-pill{padding:10px 14px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:12px;white-space:nowrap}
+.view{display:none}.view.active{display:block}.welcome{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:24px 26px;border:1px solid #2b4863;border-radius:var(--radius);background:linear-gradient(110deg,#14283d,#17203b 65%,#28234b);margin-bottom:22px;overflow:hidden}.welcome h2{margin:0 0 7px;font-size:22px;letter-spacing:-.5px}.welcome p{margin:0;color:#b3c5dc;max-width:550px}.welcome-art{font-size:53px;opacity:.9;filter:drop-shadow(0 8px 22px #67e8f955)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:22px}.stat,.panel{background:linear-gradient(145deg,#121e32,#10192a);border:1px solid var(--line);border-radius:var(--radius)}.stat{padding:18px}.stat-top{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px}.stat-icon{font-size:17px}.stat-value{font-size:29px;font-weight:800;letter-spacing:-1px;margin:10px 0 2px}.stat-foot{font-size:11px;color:var(--muted)}.accent-cyan{color:var(--cyan)}.accent-violet{color:var(--violet)}.accent-green{color:var(--green)}
+.columns{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr);gap:18px}.panel{padding:21px;min-width:0}.panel-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:17px}.panel h3{font-size:16px;margin:0}.panel-sub{font-size:12px;color:var(--muted);margin-top:4px}.text-btn{border:0;background:transparent;color:var(--cyan);font-size:12px;font-weight:700;padding:5px}.task-list,.subject-list{display:grid;gap:10px}.task-row{display:flex;align-items:center;gap:11px;padding:12px;border:1px solid #23334b;border-radius:12px;background:#101a2b}.task-row.done .task-title{text-decoration:line-through;color:#6f819b}.task-check{accent-color:#67e8f9;width:16px;height:16px;flex-shrink:0}.task-content{flex:1;min-width:0}.task-title{font-size:13px;font-weight:650;overflow-wrap:anywhere}.task-meta{font-size:11px;color:var(--muted);margin-top:3px}.tag{display:inline-flex;align-items:center;padding:4px 8px;border-radius:99px;background:#20354a;color:#a5eafa;font-size:10px;font-weight:750;white-space:nowrap}.tag.late{background:#3a202d;color:var(--red)}.tag.done-tag{background:#16352f;color:var(--green)}
+.subject-item{padding:13px;border:1px solid #23334b;border-radius:12px}.subject-title{display:flex;justify-content:space-between;gap:10px;font-size:13px;font-weight:700}.subject-meta{font-size:11px;color:var(--muted);margin:4px 0 10px}.progress{height:6px;background:#24334a;border-radius:99px;overflow:hidden}.progress span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#67e8f9,#a78bfa)}.empty{padding:22px;text-align:center;color:var(--muted);font-size:13px;border:1px dashed #31435d;border-radius:12px}
+.section-title{margin:0 0 5px;font-size:23px;letter-spacing:-.5px}.section-desc{margin:0 0 22px;color:var(--muted);font-size:13px}.form-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:grid;gap:6px;margin-bottom:12px}.field label{font-size:12px;color:#afbed2;font-weight:650}.field input,.field select,.field textarea{width:100%;padding:11px 12px;background:#0b1424;border:1px solid #2b3c55;border-radius:10px;color:var(--text);outline:none}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #67e8f91a}.primary{border:0;border-radius:10px;background:var(--cyan);color:#081522;font-weight:800;padding:11px 16px}.primary:hover{filter:brightness(1.08)}.secondary{border:1px solid #30425b;border-radius:10px;background:#17243a;color:var(--text);padding:10px 13px}.danger{border:1px solid #623443;background:#2a1927;color:#fda4af;border-radius:9px;padding:6px 9px;font-size:11px}.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:16px}.toolbar input,.toolbar select{padding:10px 12px;background:#0b1424;border:1px solid #2b3c55;border-radius:10px;color:var(--text)}.toolbar input{flex:1;min-width:160px}.data-list{display:grid;gap:10px}.item-card{padding:15px;border:1px solid #263750;border-radius:13px;background:#111c2e;display:flex;justify-content:space-between;align-items:center;gap:12px}.item-card h4{margin:0 0 4px;font-size:14px}.item-card p{margin:0;color:var(--muted);font-size:12px}.item-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.topic-row{display:flex;align-items:center;gap:10px;padding:12px;border-bottom:1px solid #23334b}.topic-row:last-child{border-bottom:0}.topic-row span:nth-child(2){flex:1;font-size:13px}.topic-row select{background:#0b1424;color:var(--text);border:1px solid #2b3c55;border-radius:8px;padding:7px;font-size:11px;max-width:145px}
+.notice{font-size:12px;color:var(--muted);padding:13px;border:1px solid var(--line);border-radius:12px;background:#0c1626;margin-top:15px}.footer{margin-top:26px;text-align:center;color:#62758f;font-size:11px}.toast{position:fixed;right:20px;bottom:20px;background:#17382f;border:1px solid #2c6b58;color:#c5ffeb;padding:12px 16px;border-radius:12px;box-shadow:0 10px 35px #0005;display:none;z-index:10}
+@media(max-width:1000px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.columns{grid-template-columns:1fr}}
+@media(max-width:700px){.app{grid-template-columns:1fr}.sidebar{padding:13px 14px;border-right:0;border-bottom:1px solid var(--line);gap:12px}.brand{padding:0 3px}.nav-label,.side-note{display:none}.nav{display:flex;overflow-x:auto;padding-bottom:2px}.nav button{white-space:nowrap;padding:9px 11px;font-size:12px}.nav-icon{width:auto}main{padding:22px 14px 35px}.topbar{margin-bottom:20px;align-items:flex-start}.date-pill{font-size:10px;padding:8px 10px}.welcome{padding:19px}.welcome-art{display:none}.stat{padding:14px}.stat-value{font-size:25px}.panel{padding:16px}.form-row{grid-template-columns:1fr}.item-card{align-items:flex-start;flex-direction:column}.item-actions{width:100%}.item-actions>*{flex:1}.topic-row{flex-wrap:wrap}.topic-row select{max-width:100%;flex:1}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">S</div><div class="brand-name">Sem<span>Sync</span></div></div>
+    <div class="nav-label">Workspace</div>
+    <nav class="nav" aria-label="Main navigation">
+      <button class="active" data-view="overview"><span class="nav-icon">◫</span> Overview</button>
+      <button data-view="tasks"><span class="nav-icon">☑</span> Assignments</button>
+      <button data-view="syllabus"><span class="nav-icon">▤</span> Syllabus</button>
+      <button data-view="marks"><span class="nav-icon">％</span> Marks</button>
+      <button data-view="subjects"><span class="nav-icon">◈</span> Subjects</button>
+    </nav>
+    <div class="side-note"><strong>Small steps add up.</strong>Keep your semester organized, one task at a time.</div>
+  </aside>
+  <main>
+    <header class="topbar">
+      <div><div class="eyebrow">Your semester, in sync</div><h1 id="page-title">Good to see you.</h1></div>
+      <div class="date-pill" id="today-pill"></div>
+    </header>
+
+    <section class="view active" id="view-overview">
+      <div class="welcome"><div><h2>Your semester starts here ✨</h2><p>A calmer way to keep track of assignments, syllabus progress, subjects and marks — all in one workspace.</p></div><div class="welcome-art">✦</div></div>
+      <div class="stats">
+        <div class="stat"><div class="stat-top">Subjects <span class="stat-icon accent-cyan">◈</span></div><div class="stat-value" id="stat-subjects">0</div><div class="stat-foot">In your semester</div></div>
+        <div class="stat"><div class="stat-top">Open tasks <span class="stat-icon accent-violet">☑</span></div><div class="stat-value" id="stat-open">0</div><div class="stat-foot">Still to complete</div></div>
+        <div class="stat"><div class="stat-top">Completed <span class="stat-icon accent-green">✓</span></div><div class="stat-value" id="stat-done">0%</div><div class="stat-foot">Assignment completion</div></div>
+        <div class="stat"><div class="stat-top">Syllabus <span class="stat-icon accent-cyan">▤</span></div><div class="stat-value" id="stat-syllabus">0%</div><div class="stat-foot">Topics completed</div></div>
+      </div>
+      <div class="columns">
+        <section class="panel"><div class="panel-head"><div><h3>Upcoming assignments</h3><div class="panel-sub">Your next things to focus on</div></div><button class="text-btn" data-goto="tasks">View all →</button></div><div class="task-list" id="overview-tasks"></div></section>
+        <section class="panel"><div class="panel-head"><div><h3>Subject progress</h3><div class="panel-sub">A snapshot of your syllabus</div></div><button class="text-btn" data-goto="syllabus">View syllabus →</button></div><div class="subject-list" id="overview-subjects"></div></section>
+      </div>
+      <div class="notice">🔒 Your data stays in this browser using local storage. It is not synced across devices or browsers.</div>
+    </section>
+
+    <section class="view" id="view-tasks">
+      <h2 class="section-title">Assignments</h2><p class="section-desc">Capture deadlines, then tick things off as you finish them.</p>
+      <div class="panel" style="margin-bottom:17px"><form id="task-form"><div class="form-row"><div class="field"><label for="task-title">Assignment / task name</label><input id="task-title" maxlength="100" required placeholder="e.g. Physics thin film notes"></div><div class="field"><label for="task-subject">Subject</label><select id="task-subject"></select></div><div class="field"><label for="task-date">Due date</label><input id="task-date" type="date" required></div><div class="field"><label for="task-priority">Priority</label><select id="task-priority"><option>Medium</option><option>High</option><option>Low</option></select></div></div><button class="primary" type="submit">＋ Add assignment</button></form></div>
+      <div class="toolbar"><input id="task-search" placeholder="Search assignments..." aria-label="Search assignments"><select id="task-filter" aria-label="Filter assignments"><option value="all">All tasks</option><option value="open">Open</option><option value="done">Completed</option></select></div>
+      <div class="data-list" id="all-tasks"></div>
+    </section>
+
+    <section class="view" id="view-syllabus">
+      <h2 class="section-title">Syllabus tracker</h2><p class="section-desc">Add topics for each subject and update your progress as you study.</p>
+      <div class="panel" style="margin-bottom:17px"><form id="topic-form"><div class="form-row"><div class="field"><label for="topic-name">Topic / chapter name</label><input id="topic-name" maxlength="100" required placeholder="e.g. Interference in thin films"></div><div class="field"><label for="topic-subject">Subject</label><select id="topic-subject"></select></div></div><button class="primary" type="submit">＋ Add topic</button></form></div>
+      <div class="panel"><div class="panel-head"><h3>Topics by subject</h3><span class="tag" id="topic-count">0 topics</span></div><div id="all-topics"></div></div>
+    </section>
+
+    <section class="view" id="view-marks">
+      <h2 class="section-title">Marks calculator</h2><p class="section-desc">Record a score and calculate the percentage for a test or assignment.</p>
+      <div class="columns">
+        <div class="panel"><h3 style="margin-bottom:16px">Add a result</h3><form id="mark-form"><div class="field"><label for="mark-name">Test / assessment name</label><input id="mark-name" maxlength="80" required placeholder="e.g. Physics IAT 1"></div><div class="field"><label for="mark-subject">Subject</label><select id="mark-subject"></select></div><div class="form-row"><div class="field"><label for="mark-scored">Marks scored</label><input id="mark-scored" type="number" min="0" step="any" required placeholder="e.g. 18"></div><div class="field"><label for="mark-total">Total marks</label><input id="mark-total" type="number" min="0.01" step="any" required placeholder="e.g. 25"></div></div><button class="primary" type="submit">＋ Save result</button></form><p class="panel-sub">Percentage = (marks scored ÷ total marks) × 100</p></div>
+        <div class="panel"><div class="panel-head"><div><h3>Your results</h3><div class="panel-sub">Saved in this browser</div></div></div><div class="data-list" id="all-marks"></div></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-subjects">
+      <h2 class="section-title">Your subjects</h2><p class="section-desc">Create your semester's subject list. Use your own college syllabus.</p>
+      <div class="panel" style="margin-bottom:17px"><form id="subject-form"><div class="form-row"><div class="field"><label for="subject-name">Subject name</label><input id="subject-name" maxlength="70" required placeholder="e.g. Engineering Physics"></div><div class="field"><label for="subject-code">Subject code (optional)</label><input id="subject-code" maxlength="20" placeholder="e.g. PHY101"></div></div><button class="primary" type="submit">＋ Add subject</button></form></div>
+      <div class="data-list" id="all-subjects"></div>
+      <div class="notice">Tip: start by adding your actual semester subjects. Then use Assignments and Syllabus to link tasks and topics to them.</div>
+    </section>
+    <footer class="footer">SemSync · Built for a more organized semester · v1.0</footer>
+  </main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+const STORAGE_KEY = "semsync-v1";
+const $ = id => document.getElementById(id);
+const today = new Date();
+$("today-pill").textContent = today.toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric",year:"numeric"});
+$("task-date").value = new Date(Date.now()+86400000).toISOString().slice(0,10);
+
+let state = loadState();
+function loadState(){
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){const data=JSON.parse(raw);if(data&&Array.isArray(data.subjects)&&Array.isArray(data.tasks)&&Array.isArray(data.topics)&&Array.isArray(data.marks))return data;}
+  } catch(e) {}
+  return {subjects:[],tasks:[],topics:[],marks:[]};
+}
+function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));renderAll();}
+function esc(value){return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function notify(message){const t=$("toast");t.textContent=message;t.style.display="block";clearTimeout(notify.timer);notify.timer=setTimeout(()=>t.style.display="none",2400);}
+function subjectName(id){return state.subjects.find(s=>s.id===id)?.name||"General";}
+function dateLabel(value){if(!value)return "No date";return new Date(value+"T12:00:00").toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"});}
+function fillSubjectSelects(){
+  ["task-subject","topic-subject","mark-subject"].forEach(id=>{const el=$(id),old=el.value;el.innerHTML='<option value="">General / no subject</option>'+state.subjects.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join("");if(state.subjects.some(s=>s.id===old))el.value=old;});
+}
+function topicStats(subjectId){const topics=state.topics.filter(t=>!subjectId||t.subjectId===subjectId);return {total:topics.length,done:topics.filter(t=>t.status==="Completed").length,progress:topics.length?Math.round(topics.filter(t=>t.status==="Completed").length/topics.length*100):0};}
+function taskMarkup(task,compact=false){
+  const overdue=!task.done&&task.due<new Date().toISOString().slice(0,10);
+  return `<div class="task-row ${task.done?"done":""}"><input class="task-check" type="checkbox" data-toggle-task="${task.id}" ${task.done?"checked":""} aria-label="Mark ${esc(task.title)} complete"><div class="task-content"><div class="task-title">${esc(task.title)}</div><div class="task-meta">${esc(subjectName(task.subjectId))} · Due ${dateLabel(task.due)}</div></div><span class="tag ${task.done?"done-tag":overdue?"late":""}">${task.done?"Done":overdue?"Overdue":esc(task.priority)}</span>${compact?"":`<button class="danger" data-delete-task="${task.id}">Delete</button>`}</div>`;
+}
+function renderOverview(){
+  const done=state.tasks.filter(t=>t.done).length;
+  $("stat-subjects").textContent=state.subjects.length;
+  $("stat-open").textContent=state.tasks.length-done;
+  $("stat-done").textContent=(state.tasks.length?Math.round(done/state.tasks.length*100):0)+"%";
+  $("stat-syllabus").textContent=topicStats().progress+"%";
+  const tasks=[...state.tasks].filter(t=>!t.done).sort((a,b)=>a.due.localeCompare(b.due)).slice(0,4);
+  $("overview-tasks").innerHTML=tasks.length?tasks.map(t=>taskMarkup(t,true)).join(""):'<div class="empty">No open assignments yet. Add your first task to get started.</div>';
+  const subjects=state.subjects.slice(0,5);
+  $("overview-subjects").innerHTML=subjects.length?subjects.map(s=>{const st=topicStats(s.id);return `<div class="subject-item"><div class="subject-title"><span>${esc(s.name)}</span><span class="accent-cyan">${st.progress}%</span></div><div class="subject-meta">${st.done} of ${st.total} topics completed</div><div class="progress"><span style="width:${st.progress}%"></span></div></div>`}).join(""):'<div class="empty">Add subjects to see your study progress.</div>';
+}
+function renderTasks(){
+  const q=$("task-search").value.toLowerCase(),filter=$("task-filter").value;
+  const tasks=[...state.tasks].filter(t=>(t.title+" "+subjectName(t.subjectId)).toLowerCase().includes(q)&&(filter==="all"||(filter==="open"&&!t.done)||(filter==="done"&&t.done))).sort((a,b)=>Number(a.done)-Number(b.done)||a.due.localeCompare(b.due));
+  $("all-tasks").innerHTML=tasks.length?tasks.map(t=>taskMarkup(t)).join(""):'<div class="empty">No assignments match. Add a task above or change your filter.</div>';
+}
+function renderTopics(){
+  $("topic-count").textContent=`${state.topics.length} topic${state.topics.length===1?"":"s"}`;
+  const grouped=state.subjects.map(s=>({s,topics:state.topics.filter(t=>t.subjectId===s.id)})).filter(g=>g.topics.length);
+  const general=state.topics.filter(t=>!t.subjectId);
+  let html=grouped.map(g=>`<div style="margin-bottom:18px"><div class="panel-head"><h3>${esc(g.s.name)}</h3><span class="tag">${g.topics.filter(t=>t.status==="Completed").length}/${g.topics.length} done</span></div>${g.topics.map(topicRow).join("")}</div>`).join("");
+  if(general.length)html+=`<div style="margin-bottom:18px"><div class="panel-head"><h3>General</h3></div>${general.map(topicRow).join("")}</div>`;
+  $("all-topics").innerHTML=html||'<div class="empty">No topics yet. Add your first chapter above.</div>';
+}
+function topicRow(t){return `<div class="topic-row"><span class="accent-violet">▤</span><span>${esc(t.name)}</span><select data-topic-status="${t.id}" aria-label="Progress for ${esc(t.name)}">${["Not Started","In Progress","Completed"].map(x=>`<option ${t.status===x?"selected":""}>${x}</option>`).join("")}</select><button class="danger" data-delete-topic="${t.id}">Delete</button></div>`;}
+function renderMarks(){
+  $("all-marks").innerHTML=state.marks.length?[...state.marks].reverse().map(m=>`<div class="item-card"><div><h4>${esc(m.name)}</h4><p>${esc(subjectName(m.subjectId))} · ${m.scored} / ${m.total} marks</p></div><div class="item-actions"><span class="tag">${(m.scored/m.total*100).toFixed(1)}%</span><button class="danger" data-delete-mark="${m.id}">Delete</button></div></div>`).join(""):'<div class="empty">Your saved scores will appear here.</div>';
+}
+function renderSubjects(){
+  $("all-subjects").innerHTML=state.subjects.length?state.subjects.map(s=>{const tasks=state.tasks.filter(t=>t.subjectId===s.id).length,st=topicStats(s.id);return `<div class="item-card"><div><h4>${esc(s.name)} ${s.code?`<span class="tag">${esc(s.code)}</span>`:""}</h4><p>${st.total} topics · ${tasks} assignments · ${st.progress}% syllabus complete</p></div><div class="item-actions"><button class="danger" data-delete-subject="${s.id}">Delete subject</button></div></div>`}).join(""):'<div class="empty">No subjects yet. Add the subjects you are studying this semester.</div>';
+}
+function renderAll(){fillSubjectSelects();renderOverview();renderTasks();renderTopics();renderMarks();renderSubjects();}
+function switchView(name){
+  document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id==="view-"+name));
+  document.querySelectorAll("[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===name));
+  const titles={overview:"Good to see you.",tasks:"Your assignments.",syllabus:"Track your syllabus.",marks:"Know your progress.",subjects:"Your semester subjects."};
+  $("page-title").textContent=titles[name]||"SemSync";
+}
+document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>switchView(b.dataset.view)));
+document.querySelectorAll("[data-goto]").forEach(b=>b.addEventListener("click",()=>switchView(b.dataset.goto)));
+$("task-form").addEventListener("submit",e=>{e.preventDefault();state.tasks.push({id:crypto.randomUUID(),title:$("task-title").value.trim(),subjectId:$("task-subject").value,due:$("task-date").value,priority:$("task-priority").value,done:false});save();e.target.reset();$("task-date").value=new Date(Date.now()+86400000).toISOString().slice(0,10);notify("Assignment added.");});
+$("topic-form").addEventListener("submit",e=>{e.preventDefault();state.topics.push({id:crypto.randomUUID(),name:$("topic-name").value.trim(),subjectId:$("topic-subject").value,status:"Not Started"});save();e.target.reset();notify("Topic added.");});
+$("subject-form").addEventListener("submit",e=>{e.preventDefault();const name=$("subject-name").value.trim();if(state.subjects.some(s=>s.name.toLowerCase()===name.toLowerCase())){notify("That subject already exists.");return;}state.subjects.push({id:crypto.randomUUID(),name,code:$("subject-code").value.trim()});save();e.target.reset();notify("Subject added.");});
+$("mark-form").addEventListener("submit",e=>{e.preventDefault();const scored=Number($("mark-scored").value),total=Number($("mark-total").value);if(total<=0||scored<0||scored>total){notify("Enter marks from 0 up to the total marks.");return;}state.marks.push({id:crypto.randomUUID(),name:$("mark-name").value.trim(),subjectId:$("mark-subject").value,scored,total});save();e.target.reset();notify("Result saved.");});
+$("task-search").addEventListener("input",renderTasks);$("task-filter").addEventListener("change",renderTasks);
+document.addEventListener("change",e=>{
+  if(e.target.matches("[data-toggle-task]")){const t=state.tasks.find(t=>t.id===e.target.dataset.toggleTask);if(t)t.done=e.target.checked;save();notify(t?.done?"Task completed.":"Task reopened.");}
+  if(e.target.matches("[data-topic-status]")){const t=state.topics.find(t=>t.id===e.target.dataset.topicStatus);if(t)t.status=e.target.value;save();notify("Syllabus progress updated.");}
+});
+document.addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b)return;
+  if(b.dataset.deleteTask){state.tasks=state.tasks.filter(t=>t.id!==b.dataset.deleteTask);save();notify("Assignment deleted.");}
+  if(b.dataset.deleteTopic){state.topics=state.topics.filter(t=>t.id!==b.dataset.deleteTopic);save();notify("Topic deleted.");}
+  if(b.dataset.deleteMark){state.marks=state.marks.filter(m=>m.id!==b.dataset.deleteMark);save();notify("Result deleted.");}
+  if(b.dataset.deleteSubject){const id=b.dataset.deleteSubject;state.subjects=state.subjects.filter(s=>s.id!==id);state.tasks.forEach(t=>{if(t.subjectId===id)t.subjectId="";});state.topics.forEach(t=>{if(t.subjectId===id)t.subjectId="";});state.marks.forEach(m=>{if(m.subjectId===id)m.subjectId="";});save();notify("Subject deleted; linked items kept as General.");}
+});
+renderAll();
+</script>
+</body>
+</html>
